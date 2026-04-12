@@ -12,6 +12,7 @@
    ================================================ */
 
 import React, { useState } from 'react';
+import { Alert } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
 import SetupScreen from './src/screens/SetupScreen';
 import GameScreen from './src/screens/GameScreen';
@@ -28,8 +29,9 @@ export default function App() {
   const [player2, setPlayer2] = useState('');
 
   // Datos del juego (se usarán en las Pantallas 3 y 4)
-  const [answeredCount, setAnsweredCount] = useState(0);
-  const [skippedCount, setSkippedCount] = useState(0);
+  const [connectedCount, setConnectedCount] = useState(0);
+  const [notConnectedCount, setNotConnectedCount] = useState(0);
+  const [numQuestions, setNumQuestions] = useState(15);
 
   // === RENDERIZAR LA PANTALLA ACTUAL ===
   // Dependiendo del valor de "screen", muestra una pantalla diferente
@@ -37,16 +39,27 @@ export default function App() {
     case 'home':
       return (
         <HomeScreen
-          onPlay={() => setScreen('setup')}
+          onSelectModule={(moduleKey) => {
+            if (moduleKey === 'couple') {
+              setScreen('setup');
+            } else {
+              Alert.alert(
+                'Módulo en desarrollo',
+                'Este módulo todavía se está preparando. Elige "Pareja" para comenzar ahora mismo.',
+                [{ text: 'Entendido' }]
+              );
+            }
+          }}
         />
       );
 
     case 'setup':
       return (
         <SetupScreen
-          onStart={(p1, p2) => {
+          onStart={(p1, p2, num) => {
             setPlayer1(p1);
             setPlayer2(p2);
+            setNumQuestions(num);
             setScreen('game');
           }}
           onBack={() => setScreen('home')}
@@ -58,8 +71,9 @@ export default function App() {
         <GameScreen
           player1={player1}
           player2={player2}
-          onAnswered={() => setAnsweredCount(prev => prev + 1)}
-          onSkipped={() => setSkippedCount(prev => prev + 1)}
+          numQuestions={numQuestions}
+          onConnected={() => setConnectedCount(prev => prev + 1)}
+          onNotConnected={() => setNotConnectedCount(prev => prev + 1)}
           onFinish={() => setScreen('results')}
         />
       );
@@ -69,12 +83,12 @@ export default function App() {
         <ResultsScreen
           player1={player1}
           player2={player2}
-          answeredCount={answeredCount}
-          skippedCount={skippedCount}
+          connectedCount={connectedCount}
+          notConnectedCount={notConnectedCount}
           onPlayAgain={() => {
             setScreen('home');
-            setAnsweredCount(0);
-            setSkippedCount(0);
+            setConnectedCount(0);
+            setNotConnectedCount(0);
           }}
         />
       );
@@ -84,7 +98,17 @@ export default function App() {
     default:
       return (
         <HomeScreen
-          onPlay={() => setScreen('setup')}
+          onSelectModule={(moduleKey) => {
+            if (moduleKey === 'couple') {
+              setScreen('setup');
+            } else {
+              Alert.alert(
+                'Módulo en desarrollo',
+                'Este módulo todavía se está preparando. Elige "Pareja" para comenzar ahora mismo.',
+                [{ text: 'Entendido' }]
+              );
+            }
+          }}
         />
       );
   }

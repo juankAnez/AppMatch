@@ -2,10 +2,10 @@
    PANTALLA 2 — CONFIGURACIÓN DE JUGADORES
    
    Muestra:
-   - Título "¿Quiénes juegan?"
-   - Campo de texto para Jugador 1
-   - Campo de texto para Jugador 2
-   - Botón "Comenzar juego" (solo activo si ambos
+   - Título "¡Hola, enamorados!"
+   - Campo de texto para "Mi amor" (Jugador 1)
+   - Campo de texto para "Mi vida" (Jugador 2)
+   - Botón "Empezar romance" (solo activo si ambos
      nombres están llenos)
    - Botón "Volver" para regresar al inicio
    ================================================ */
@@ -24,14 +24,18 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, SIZES, FONTS } from '../constants/theme';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SetupScreen({ onStart, onBack }) {
   // Estado de los campos de texto
   const [name1, setName1] = useState('');
   const [name2, setName2] = useState('');
+  const [numQuestions, setNumQuestions] = useState('15');
 
-  // ¿Están ambos campos llenos?
+  // Validaciones
   const bothFilled = name1.trim().length > 0 && name2.trim().length > 0;
+  const num = numQuestions.trim() === '' ? NaN : parseInt(numQuestions);
+  const numValid = !isNaN(num) && num >= 1;
 
   // === ANIMACIONES ===
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -99,8 +103,8 @@ export default function SetupScreen({ onStart, onBack }) {
   };
 
   const handleStart = () => {
-    if (bothFilled) {
-      onStart(name1.trim(), name2.trim());
+    if (bothFilled && numValid) {
+      onStart(name1.trim(), name2.trim(), num);
     }
   };
 
@@ -118,22 +122,22 @@ export default function SetupScreen({ onStart, onBack }) {
 
       {/* Header */}
       <Animated.View style={[styles.header, fadeSlideUp(headerAnim)]}>
-        <Text style={styles.emoji}>👫</Text>
-        <Text style={styles.title}>¿Quiénes juegan?</Text>
+        <Ionicons name="heart-circle" size={60} color={COLORS.accent} />
+        <Text style={styles.title}>¡Hola, enamorados!</Text>
         <Text style={styles.subtitle}>
-          Ingresen sus nombres para comenzar la ronda
+          Ingresen sus nombres para comenzar esta aventura romántica
         </Text>
       </Animated.View>
 
       {/* Campo Jugador 1 */}
       <Animated.View style={[styles.inputCard, fadeSlideUp(card1Anim)]}>
         <View style={styles.inputLabel}>
-          <Text style={styles.playerIcon}>💜</Text>
-          <Text style={styles.playerLabel}>Jugador 1</Text>
+          <Ionicons name="heart" size={24} color={COLORS.accent} style={styles.playerIcon} />
+          <Text style={styles.playerLabel}>Mi amor</Text>
         </View>
         <TextInput
           style={styles.input}
-          placeholder="Escribe su nombre..."
+          placeholder="Escribe tu nombre..."
           placeholderTextColor={COLORS.textMuted}
           value={name1}
           onChangeText={setName1}
@@ -145,17 +149,37 @@ export default function SetupScreen({ onStart, onBack }) {
       {/* Campo Jugador 2 */}
       <Animated.View style={[styles.inputCard, fadeSlideUp(card2Anim)]}>
         <View style={styles.inputLabel}>
-          <Text style={styles.playerIcon}>🩷</Text>
-          <Text style={styles.playerLabel}>Jugador 2</Text>
+          <Ionicons name="heart-outline" size={24} color={COLORS.secondary} style={styles.playerIcon} />
+          <Text style={styles.playerLabel}>Mi vida</Text>
         </View>
         <TextInput
           style={styles.input}
-          placeholder="Escribe su nombre..."
+          placeholder="Escribe tu nombre..."
           placeholderTextColor={COLORS.textMuted}
           value={name2}
           onChangeText={setName2}
           autoCapitalize="words"
           maxLength={20}
+        />
+      </Animated.View>
+
+      {/* Número de preguntas */}
+      <Animated.View style={[styles.inputCard, fadeSlideUp(card2Anim)]}>
+        <View style={styles.inputLabel}>
+          <Ionicons name="mail" size={24} color={COLORS.accent} />
+          <Text style={styles.playerLabel}>Cartas de amor (1-50)</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="15"
+          placeholderTextColor={COLORS.textMuted}
+          value={numQuestions}
+          onChangeText={(text) => {
+            const cleaned = text.replace(/[^0-9]/g, '');
+            setNumQuestions(cleaned);
+          }}
+          keyboardType="numeric"
+          maxLength={2}
         />
       </Animated.View>
 
@@ -168,11 +192,11 @@ export default function SetupScreen({ onStart, onBack }) {
       >
         <TouchableOpacity
           activeOpacity={0.85}
-          disabled={!bothFilled}
+          disabled={!bothFilled || !numValid}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           onPress={handleStart}
-          style={[styles.buttonOuter, !bothFilled && styles.buttonDisabled]}
+          style={[styles.buttonOuter, (!bothFilled || !numValid) && styles.buttonDisabled]}
         >
           <LinearGradient
             colors={
@@ -184,14 +208,14 @@ export default function SetupScreen({ onStart, onBack }) {
             end={{ x: 1, y: 1 }}
             style={styles.button}
           >
-            <Text style={styles.buttonIcon}>🎮</Text>
+            <Ionicons name="heart-circle-outline" size={24} color={COLORS.textBright} style={styles.buttonIcon} />
             <Text
               style={[
                 styles.buttonText,
                 !bothFilled && styles.buttonTextDisabled,
               ]}
             >
-              Comenzar juego
+              Empezar romance
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -260,21 +284,23 @@ const styles = StyleSheet.create({
   inputCard: {
     width: '100%',
     maxWidth: 380,
-    backgroundColor: COLORS.elevated,
     borderRadius: SIZES.radiusLg,
     padding: SIZES.lg,
     marginBottom: SIZES.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+    overflow: 'hidden',
   },
   inputLabel: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: SIZES.sm + 2,
-    gap: SIZES.sm,
   },
   playerIcon: {
-    fontSize: 18,
+    marginRight: SIZES.sm,
   },
   playerLabel: {
     fontSize: SIZES.fontBody,
@@ -282,15 +308,20 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
   input: {
-    backgroundColor: COLORS.cardBackground,
+    backgroundColor: COLORS.card,
     borderRadius: SIZES.radiusMd,
     paddingVertical: SIZES.md,
     paddingHorizontal: SIZES.md,
-    fontSize: SIZES.fontMedium,
+    fontSize: SIZES.fontBody,
     fontWeight: FONTS.medium,
     color: COLORS.textBright,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: COLORS.border,
+    shadowColor: COLORS.accent,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
 
   // Botón
@@ -314,10 +345,9 @@ const styles = StyleSheet.create({
     paddingVertical: SIZES.md + 2,
     paddingHorizontal: SIZES.xxl + SIZES.md,
     borderRadius: SIZES.radiusXl,
-    gap: SIZES.sm,
   },
   buttonIcon: {
-    fontSize: 22,
+    marginRight: SIZES.sm,
   },
   buttonText: {
     fontSize: SIZES.fontLarge,

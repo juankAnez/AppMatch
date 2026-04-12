@@ -8,25 +8,32 @@
    ================================================ */
 
 export const COLORS = {
-  // Fondos
-  background: '#0a0608',
-  cardBackground: '#140e11',
-  elevated: '#1a1215',
+  // Fondos románticos
+  background: '#1a0a14', // Fondo oscuro con toque rosa
+  backgroundDark: '#0f050c',
+  card: '#2a1520', // Rosa oscuro para cartas
+  cardDark: '#1f0f18',
 
-  // Acento principal (rosa-fucsia)
-  accent: '#c4527e',
-  accentLight: '#e06a9a',
-  accentDark: '#9e3d62',
+  // Acento principal (rosa pasión)
+  accent: '#e91e63', // Rosa intenso
+  accentLight: '#f48fb1',
+  accentDark: '#c2185b',
+  accentAlpha: 'rgba(233, 30, 99, 0.14)',
 
-  // Textos
-  text: '#e8d0dc',
-  textMuted: '#8a6b78',
+  // Secundario (rojo amor)
+  secondary: '#ad1457', // Rojo rosado
+  secondaryLight: '#e91e63',
+  secondaryDark: '#880e4f',
+
+  // Textos suaves
+  text: '#fce4ec', // Rosa muy claro
+  textMuted: '#f8bbd9',
   textBright: '#ffffff',
 
-  // Bordes y efectos
-  border: 'rgba(196, 82, 126, 0.15)',
-  glow: 'rgba(196, 82, 126, 0.3)',
-  overlay: 'rgba(10, 6, 8, 0.6)',
+  // Bordes y efectos románticos
+  border: 'rgba(233, 30, 99, 0.2)',
+  glow: 'rgba(233, 30, 99, 0.4)',
+  overlay: 'rgba(26, 10, 20, 0.7)',
 };
 
 export const SIZES = {
@@ -38,7 +45,11 @@ export const SIZES = {
   xl: 32,
   xxl: 48,
 
+  // Padding general
+  padding: 20,
+
   // Bordes redondeados
+  radius: 15,
   radiusSm: 8,
   radiusMd: 12,
   radiusLg: 20,
