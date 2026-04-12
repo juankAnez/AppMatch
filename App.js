@@ -13,6 +13,9 @@
 
 import React, { useState } from 'react';
 import HomeScreen from './src/screens/HomeScreen';
+import SetupScreen from './src/screens/SetupScreen';
+import GameScreen from './src/screens/GameScreen';
+import ResultsScreen from './src/screens/ResultsScreen';
 
 export default function App() {
   // === ESTADO GLOBAL DEL JUEGO ===
@@ -38,13 +41,45 @@ export default function App() {
         />
       );
 
+    case 'setup':
+      return (
+        <SetupScreen
+          onStart={(p1, p2) => {
+            setPlayer1(p1);
+            setPlayer2(p2);
+            setScreen('game');
+          }}
+          onBack={() => setScreen('home')}
+        />
+      );
+
+    case 'game':
+      return (
+        <GameScreen
+          player1={player1}
+          player2={player2}
+          onAnswered={() => setAnsweredCount(prev => prev + 1)}
+          onSkipped={() => setSkippedCount(prev => prev + 1)}
+          onFinish={() => setScreen('results')}
+        />
+      );
+
+    case 'results':
+      return (
+        <ResultsScreen
+          player1={player1}
+          player2={player2}
+          answeredCount={answeredCount}
+          skippedCount={skippedCount}
+          onPlayAgain={() => {
+            setScreen('home');
+            setAnsweredCount(0);
+            setSkippedCount(0);
+          }}
+        />
+      );
+
     // Las siguientes pantallas las construiremos después:
-    // case 'setup':
-    //   return <SetupScreen ... />;
-    // case 'game':
-    //   return <GameScreen ... />;
-    // case 'results':
-    //   return <ResultsScreen ... />;
 
     default:
       return (
