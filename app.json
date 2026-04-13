@@ -1,16 +1,17 @@
 {
   "expo": {
-    "name": "juegoMovie",
-    "slug": "juegoMovie",
+    "name": "Match Hub",
+    "slug": "matchhub",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "description": "Juegos interactivos para parejas, fiestas y aventuras compartidas",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1a0a14"
     },
     "ios": {
       "supportsTablet": true
