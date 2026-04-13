@@ -114,5 +114,4 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 
 ---
 
-¡Diviértete conectando con tus seres queridos! 💕🎉</content>
-<parameter name="filePath">c:\Users\ASUS\Documents\juegoMovie\README.md
+¡Diviértete conectando con tus seres queridos! 💕🎉
