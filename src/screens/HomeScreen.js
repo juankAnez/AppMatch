@@ -206,6 +206,15 @@ export default function HomeScreen({ onSelectModule }) {
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.85}
+          onPress={() => onSelectModule('impostor')}
+          style={[styles.moduleCard, styles.moduleCardImpostor]}
+        >
+          <Ionicons name="eye" size={28} color="#00E5FF" style={styles.moduleIcon} />
+          <Text style={styles.moduleTitle}>Impostor</Text>
+          <Text style={styles.moduleDescription}>¿Quién es el espía? Descúbrelo en grupo.</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.85}
           onPress={() => onSelectModule('adventure')}
           style={styles.moduleCard}
         >
@@ -436,6 +445,10 @@ const styles = StyleSheet.create({
   moduleCardActive: {
     borderColor: COLORS.accent,
     backgroundColor: COLORS.accentAlpha,
+  },
+  moduleCardImpostor: {
+    borderColor: 'rgba(0, 229, 255, 0.4)',
+    backgroundColor: 'rgba(0, 229, 255, 0.08)',
   },
   moduleIcon: {
     marginBottom: SIZES.sm,
