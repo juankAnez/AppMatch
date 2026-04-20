@@ -432,16 +432,7 @@ export default function ImpostorVoteScreen({
             <TouchableOpacity
               activeOpacity={0.85}
               disabled={selectedPlayer < 0}
-              onPress={() => {
-                Alert.alert(
-                  'Confirmar eliminación',
-                  `¿Están seguros de eliminar a ${players[selectedPlayer]}?`,
-                  [
-                    { text: 'Cancelar', style: 'cancel' },
-                    { text: 'Eliminar', style: 'destructive', onPress: handleConfirmVote },
-                  ]
-                );
-              }}
+              onPress={handleConfirmVote}
               style={{ marginTop: SIZES.lg, marginBottom: SIZES.xxl }}
             >
               <LinearGradient
