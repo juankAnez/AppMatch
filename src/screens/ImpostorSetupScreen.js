@@ -23,6 +23,7 @@ import {
   StatusBar,
   Dimensions,
   Alert,
+  Switch,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -56,6 +57,7 @@ export default function ImpostorSetupScreen({ onStart, onBack }) {
   const [players, setPlayers] = useState(['', '', '']);
   const [newName, setNewName] = useState('');
   const [selectedTheme, setSelectedTheme] = useState('all');
+  const [useHints, setUseHints] = useState(false);
 
   // Animaciones
   const headerAnim = useRef(new Animated.Value(0)).current;
@@ -145,7 +147,7 @@ export default function ImpostorSetupScreen({ onStart, onBack }) {
   const handleStart = () => {
     if (!canStart) return;
     const trimmedPlayers = players.map((p) => p.trim());
-    onStart(trimmedPlayers, selectedTheme);
+    onStart(trimmedPlayers, selectedTheme, useHints);
   };
 
   const allThemes = [ALL_WORDS_THEME, ...IMPOSTOR_THEMES];
@@ -171,8 +173,12 @@ export default function ImpostorSetupScreen({ onStart, onBack }) {
       />
 
       {/* Botón volver */}
-      <TouchableOpacity style={styles.backButton} onPress={onBack}>
-        <Ionicons name="arrow-back" size={20} color={SPY.cyan} />
+      <TouchableOpacity 
+        style={styles.backButton} 
+        onPress={onBack}
+        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+      >
+        <Ionicons name="arrow-back" size={24} color={SPY.cyan} />
         <Text style={styles.backText}> Volver</Text>
       </TouchableOpacity>
 
@@ -295,6 +301,27 @@ export default function ImpostorSetupScreen({ onStart, onBack }) {
             })}
           </View>
 
+          {/* Opción de Pistas */}
+          <View style={styles.hintToggleContainer}>
+            <View style={styles.hintToggleLeft}>
+              <Ionicons name="bulb" size={20} color={SPY.yellow || '#FFD600'} />
+              <View style={{ marginLeft: SIZES.sm }}>
+                <Text style={styles.hintToggleTitle}>Pista para el Impostor</Text>
+                <Text style={styles.hintToggleDesc}>
+                  El impostor recibirá una pista relacionada a la palabra secreta.
+                </Text>
+              </View>
+            </View>
+            <Switch
+              trackColor={{ false: SPY.cardLight, true: SPY.cyan }}
+              thumbColor={useHints ? SPY.textBright : 
+                           Platform.OS === 'ios' ? '#f4f3f4' : SPY.textMuted}
+              ios_backgroundColor={SPY.cardLight}
+              onValueChange={setUseHints}
+              value={useHints}
+            />
+          </View>
+
           {/* Botón Iniciar */}
           <TouchableOpacity
             activeOpacity={0.85}
@@ -357,8 +384,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 50,
-    left: SIZES.lg,
+    top: Platform.OS === 'ios' ? 60 : 40,
+    left: SIZES.md,
     zIndex: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -548,5 +575,34 @@ const styles = StyleSheet.create({
     color: SPY.bgDark,
     marginLeft: SIZES.sm,
     letterSpacing: 0.5,
+  },
+  // Toggle Pistas
+  hintToggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: SPY.card,
+    borderRadius: SIZES.radiusLg,
+    padding: SIZES.md,
+    marginTop: SIZES.lg,
+    borderWidth: 1,
+    borderColor: SPY.border,
+  },
+  hintToggleLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: SIZES.sm,
+  },
+  hintToggleTitle: {
+    fontSize: SIZES.fontBody,
+    fontWeight: FONTS.bold,
+    color: SPY.textBright,
+  },
+  hintToggleDesc: {
+    fontSize: SIZES.fontSmall,
+    color: SPY.textMuted,
+    marginTop: 2,
+    lineHeight: 16,
   },
 });

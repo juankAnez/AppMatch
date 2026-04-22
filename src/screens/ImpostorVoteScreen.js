@@ -19,6 +19,7 @@ import {
   ScrollView,
   Alert,
   Dimensions,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -295,6 +296,16 @@ export default function ImpostorVoteScreen({
 
       <View style={styles.glowOrb} />
 
+      {/* Botón volver */}
+      <TouchableOpacity 
+        style={styles.backButton} 
+        onPress={onBack}
+        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+      >
+        <Ionicons name="arrow-back" size={24} color={SPY.cyan} />
+        <Text style={styles.backText}> Abandonar</Text>
+      </TouchableOpacity>
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -487,6 +498,21 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: SPY.glow,
     opacity: 0.2,
+  },
+  backButton: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 40,
+    left: SIZES.md,
+    zIndex: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: SIZES.sm,
+    paddingHorizontal: SIZES.md,
+  },
+  backText: {
+    color: SPY.cyan,
+    fontSize: SIZES.fontBody,
+    fontWeight: FONTS.medium,
   },
 
   // Header

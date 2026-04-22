@@ -43,7 +43,9 @@ export default function App() {
   // Datos de la ronda actual
   const [impImpostorIndex, setImpImpostorIndex] = useState(-1);
   const [impSecretWord, setImpSecretWord] = useState('');
+  const [impSecretHint, setImpSecretHint] = useState('');
   const [impThemeName, setImpThemeName] = useState('');
+  const [impUseHints, setImpUseHints] = useState(false);
 
   // Jugadores activos: índices dentro de impPlayers que no han sido eliminados
   const [impActivePlayers, setImpActivePlayers] = useState([]);
@@ -56,7 +58,7 @@ export default function App() {
   const [impRoundsPlayed, setImpRoundsPlayed] = useState(0);
 
   // ─── Helper: iniciar una ronda del Impostor ───
-  const startImpostorRound = useCallback((players, themeId, activeIdxs) => {
+  const startImpostorRound = useCallback((players, themeId, activeIdxs, useHints) => {
     // Elegir tema
     const theme =
       themeId === 'all'
@@ -64,16 +66,18 @@ export default function App() {
         : IMPOSTOR_THEMES.find((t) => t.id === themeId) || ALL_WORDS_THEME;
 
     // Elegir palabra aleatoria
-    const word = theme.words[Math.floor(Math.random() * theme.words.length)];
+    const wordObj = theme.words[Math.floor(Math.random() * theme.words.length)];
 
     // Elegir impostor aleatorio entre los activos
     const randomActivePos = Math.floor(Math.random() * activeIdxs.length);
     const impostorIdx = activeIdxs[randomActivePos];
 
     setImpImpostorIndex(impostorIdx);
-    setImpSecretWord(word);
+    setImpSecretWord(wordObj.word);
+    setImpSecretHint(wordObj.hint);
     setImpThemeName(theme.name);
     setImpActivePlayers([...activeIdxs]);
+    setImpUseHints(useHints);
 
     setScreen('impostor-reveal');
   }, []);
@@ -162,7 +166,7 @@ export default function App() {
     case 'impostor-setup':
       return (
         <ImpostorSetupScreen
-          onStart={(players, themeId) => {
+          onStart={(players, themeId, useHints) => {
             // Inicializar puntos en 0 para cada jugador
             const initialScores = {};
             players.forEach((name) => { initialScores[name] = 0; });
@@ -175,7 +179,7 @@ export default function App() {
 
             // Todos los jugadores activos al inicio
             const allIdxs = players.map((_, i) => i);
-            startImpostorRound(players, themeId, allIdxs);
+            startImpostorRound(players, themeId, allIdxs, useHints);
           }}
           onBack={() => setScreen('home')}
         />
@@ -188,6 +192,8 @@ export default function App() {
           players={impPlayers}
           impostorIndex={impImpostorIndex}
           secretWord={impSecretWord}
+          secretHint={impSecretHint}
+          useHints={impUseHints}
           themeName={impThemeName}
           onAllRevealed={() => setScreen('impostor-vote')}
           onBack={() => {
@@ -254,7 +260,7 @@ export default function App() {
             setImpRoundNumber(nextRound);
             // Resetear activos con todos los jugadores de la partida
             const allIdxs = impPlayers.map((_, i) => i);
-            startImpostorRound(impPlayers, impThemeId, allIdxs);
+            startImpostorRound(impPlayers, impThemeId, allIdxs, impUseHints);
           }}
 
           onViewScoreboard={() => setScreen('impostor-scoreboard')}
@@ -288,7 +294,7 @@ export default function App() {
             setImpRoundNumber(nextRound);
             // Nueva ronda con todos los jugadores activos
             const allIdxs = impPlayers.map((_, i) => i);
-            startImpostorRound(impPlayers, impThemeId, allIdxs);
+            startImpostorRound(impPlayers, impThemeId, allIdxs, impUseHints);
           }}
           onGoHome={() => setScreen('home')}
         />

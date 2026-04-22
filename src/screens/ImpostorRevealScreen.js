@@ -18,6 +18,7 @@ import {
   StatusBar,
   ScrollView,
   Dimensions,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -52,6 +53,8 @@ export default function ImpostorRevealScreen({
   players,         // Array de nombres
   impostorIndex,   // Índice del impostor
   secretWord,      // La palabra secreta
+  secretHint,      // La pista
+  useHints,        // Booleano, si las pistas están activadas
   themeName,       // Nombre del tema
   onAllRevealed,   // Callback cuando todos vieron su rol
   onBack,
@@ -155,7 +158,7 @@ export default function ImpostorRevealScreen({
 
           <Text style={styles.revealPlayerName}>{playerName}</Text>
 
-          {isImp ? (
+{isImp ? (
             <>
               <LinearGradient
                 colors={[SPY.red, '#D50000']}
@@ -164,9 +167,31 @@ export default function ImpostorRevealScreen({
                 <Ionicons name="warning" size={20} color={SPY.textBright} />
                 <Text style={styles.revealBadgeText}>¡ERES EL IMPOSTOR!</Text>
               </LinearGradient>
-              <Text style={styles.revealHint}>
-                No conoces la palabra secreta. Intenta pasar desapercibido durante el debate.
-              </Text>
+              {useHints && secretHint ? (
+                <View style={[styles.wordCard, { borderColor: SPY.red }]}>
+                  <Text style={styles.wordLabel}>Pista de la palabra secreta:</Text>
+                  <Text style={[styles.wordValue, { color: SPY.red, fontSize: SIZES.fontMedium + 2 }]}>
+                    {secretHint}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.revealHint}>
+                  No conoces la palabra secreta. Intenta pasar desapercibido durante el debate.
+                </Text>
+              )}
+              <TouchableOpacity
+                style={styles.hideButton}
+                onPress={() => handleHide(viewingIndex)}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={[SPY.cyan, SPY.cyanDark]}
+                  style={styles.hideButtonGradient}
+                >
+                  <Ionicons name="eye-off" size={22} color={SPY.bgDark} />
+                  <Text style={styles.hideButtonText}>Ocultar y continuar</Text>
+                </LinearGradient>
+              </TouchableOpacity>
             </>
           ) : (
             <>
@@ -181,22 +206,21 @@ export default function ImpostorRevealScreen({
               <Text style={styles.revealHint}>
                 Memorízala bien. No dejes que el impostor descubra la palabra.
               </Text>
+              <TouchableOpacity
+                style={styles.hideButton}
+                onPress={() => handleHide(viewingIndex)}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={[SPY.cyan, SPY.cyanDark]}
+                  style={styles.hideButtonGradient}
+                >
+                  <Ionicons name="eye-off" size={22} color={SPY.bgDark} />
+                  <Text style={styles.hideButtonText}>Ocultar y continuar</Text>
+                </LinearGradient>
+              </TouchableOpacity>
             </>
           )}
-
-          <TouchableOpacity
-            style={styles.hideButton}
-            onPress={() => handleHide(viewingIndex)}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={[SPY.cyan, SPY.cyanDark]}
-              style={styles.hideButtonGradient}
-            >
-              <Ionicons name="eye-off" size={22} color={SPY.bgDark} />
-              <Text style={styles.hideButtonText}>Ocultar y continuar</Text>
-            </LinearGradient>
-          </TouchableOpacity>
         </Animated.View>
       </View>
     );
@@ -211,8 +235,12 @@ export default function ImpostorRevealScreen({
       <View style={styles.glowOrb} />
 
       {/* Botón volver */}
-      <TouchableOpacity style={styles.backButton} onPress={onBack}>
-        <Ionicons name="arrow-back" size={20} color={SPY.cyan} />
+      <TouchableOpacity 
+        style={styles.backButton} 
+        onPress={onBack}
+        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+      >
+        <Ionicons name="arrow-back" size={24} color={SPY.cyan} />
         <Text style={styles.backText}> Volver</Text>
       </TouchableOpacity>
 
@@ -342,8 +370,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 50,
-    left: SIZES.lg,
+    top: Platform.OS === 'ios' ? 60 : 40,
+    left: SIZES.md,
     zIndex: 10,
     flexDirection: 'row',
     alignItems: 'center',
